@@ -1,0 +1,138 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <name>JBoss Web Services - JAX-WS Tools Maven Plugin</name>
+  <groupId>org.jboss.ws.plugins</groupId>
+  <artifactId>maven-jaxws-tools-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+
+  <version>1.1.2-SNAPSHOT</version>
+
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.ws</groupId>
+    <artifactId>jbossws-parent</artifactId>
+    <version>1.0.10.GA</version>
+  </parent>
+
+  <!-- Source Control Management -->
+  <scm>
+    <connection>scm:svn:http://anonsvn.jboss.org/repos/jbossws/projects/plugins/maven/jaxws-tools/trunk</connection>
+    <developerConnection>scm:svn:https://svn.jboss.org/repos/jbossws/projects/plugins/maven/jaxws-tools/trunk</developerConnection>
+    <url>http://fisheye.jboss.com/viewrep/JBossWS/projects/plugins/maven/jaxws-tools/trunk</url>
+  </scm>
+
+  <!-- Properties -->
+  <properties>
+    <jbossws.common.tools.version>1.2.0.Final</jbossws.common.tools.version>
+    <getopt.version>1.0.13</getopt.version>
+    <log4j.version>1.2.14</log4j.version>
+    <maven.project.version>2.2.1</maven.project.version>
+    <maven.plugin.api.version>2.2.1</maven.plugin.api.version>
+    <maven.invoker.plugin.version>1.5</maven.invoker.plugin.version>
+    <!-- For test -->
+    <junit.version>4.7</junit.version>
+    <maven.plugin.testing.harness.version>1.1</maven.plugin.testing.harness.version>
+  </properties>
+  
+  <!-- Dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>org.jboss.ws</groupId>
+      <artifactId>jbossws-common-tools</artifactId>
+      <version>${jbossws.common.tools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-project</artifactId>
+      <version>${maven.project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.plugin.api.version}</version>
+    </dependency>
+
+    <!-- Non transient test dependencies -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>${junit.version}</version>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.shared</groupId>
+      <artifactId>maven-plugin-testing-harness</artifactId>
+      <version>${maven.plugin.testing.harness.version}</version>
+      <scope>test</scope>
+    </dependency>
+    
+  </dependencies>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <version>2.8</version>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-invoker-plugin</artifactId>
+        <version>${maven.invoker.plugin.version}</version>
+        <configuration>
+          <projectsDirectory>src/test/resources/test-embedded</projectsDirectory>
+          <settingsFile>src/test/resources/test-embedded/settings.xml</settingsFile>
+          <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+          <preBuildHookScript>setup.bsh</preBuildHookScript>
+          <postBuildHookScript>verify.bsh</postBuildHookScript>
+          <addTestClassPath>true</addTestClassPath>
+        </configuration>
+        <executions>
+          <execution>
+            <id>integration-test-native</id>
+            <goals>
+              <goal>install</goal>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <cloneProjectsTo>${project.build.directory}/test-embedded-native</cloneProjectsTo>
+              <pomIncludes>
+                <pomInclude>*/pom.xml</pomInclude>
+              </pomIncludes>
+            </configuration>
+          </execution>
+          <execution>
+            <id>integration-test-cxf</id>
+            <goals>
+              <goal>install</goal>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <cloneProjectsTo>${project.build.directory}/test-embedded-cxf</cloneProjectsTo>
+              <pomIncludes>
+                <pomInclude>*/pom-cxf.xml</pomInclude>
+              </pomIncludes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <includes>
+            <include>**/*TestCase.java</include>
+            <include>**/*Test.java</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
