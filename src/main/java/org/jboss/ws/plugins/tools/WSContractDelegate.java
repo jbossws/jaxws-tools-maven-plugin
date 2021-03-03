@@ -50,15 +50,17 @@ public class WSContractDelegate
    
    public void runProvider(WSContractProviderParams params) throws Exception
    {
-      log.warn("run provider fork=" + params.isFork());
+      log.warn("run provider");
       log.warn("source=" + params.getSourceDirectory());
       log.warn("dest=" + params.getOutputDirectory());
-      if (params.isFork())
+      if (params.isFork() || Util.getJVMMajorVersion() > 8)
       {
+         log.warn("run out of process");
          runProviderOutOfProcess(params);
       }
       else
       {
+         log.warn("run in process");
          runProviderInProcess(params);
       }
    }
@@ -97,15 +99,17 @@ public class WSContractDelegate
    
    public void runConsumer(WSContractConsumerParams params, String wsdl) throws Exception
    {
-      log.warn("run consumer fork=" + params.isFork() + " wsdl=" + wsdl);
+      log.warn("run consumer " + wsdl);
       log.warn("source=" + params.getSourceDirectory());
       log.warn("output=" + params.getOutputDirectory());
-      if (params.isFork())
+      if (params.isFork() || Util.getJVMMajorVersion() > 8)
       {
+         log.warn("run consumer out of process");
          runConsumerOutOfProcess(params, wsdl);
       }
       else
       {
+         log.warn("run consumer in process");
          runConsumerInProcess(params, wsdl);
       }
    }
