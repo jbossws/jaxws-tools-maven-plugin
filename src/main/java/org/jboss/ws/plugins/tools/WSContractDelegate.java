@@ -33,9 +33,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.jboss.ws.plugins.tools.MavenLogStreamConsumer.Type;
 
 public class WSContractDelegate
 {
@@ -87,10 +84,17 @@ public class WSContractDelegate
       //int result = CommandLineUtils.executeCommandLine(new Commandline(commandLine), out, err);
       ProcessBuilder pb = new ProcessBuilder(commandList);
       Process p = pb.start();
-      new RT("provider output", p.getInputStream()).start();
-      new RT("provider error", p.getErrorStream()).start();
+      ReaderThread outThread = new ReaderThread(p.getInputStream());
+      ReaderThread errThread = new ReaderThread(p.getErrorStream());
+      outThread.start();
+      errThread.start();
       int result = p.waitFor();
-
+      for (String v : errThread.lines) {
+         log.warn("provider: " + v);
+      }
+      for (String v : outThread.lines) {
+         log.info("provider: " + v);
+      }
       if (result != 0)
       {
          throw new Exception("Process terminated with code " + result);
@@ -131,15 +135,20 @@ public class WSContractDelegate
 
       log.warn("Running command line: " + commandList);
 
-//      MavenLogStreamConsumer out = new MavenLogStreamConsumer(log, Type.OUTPUT);
-//      MavenLogStreamConsumer err = new MavenLogStreamConsumer(log, Type.ERROR);
-      //int result = CommandLineUtils.executeCommandLine(new Commandline(commandLine), out, err);
       ProcessBuilder pb = new ProcessBuilder(commandList);
       Process p = pb.start();
-      new RT("consumer output", p.getInputStream()).start();
-      new RT("consumer error", p.getErrorStream()).start();
+      ReaderThread outThread = new ReaderThread(p.getInputStream());
+      ReaderThread errThread = new ReaderThread(p.getErrorStream());
+      outThread.start();
+      errThread.start();
       int result = p.waitFor();
-      
+      for (String v : errThread.lines) {
+         log.warn("consumer: " + v);
+      }
+      for (String v : outThread.lines) {
+         log.info("consumer: " + v);
+      }
+
       if (result != 0)
       {
          throw new Exception("Process terminated with code " + result);
@@ -381,12 +390,11 @@ public class WSContractDelegate
       }
    }
 
-   private class RT extends Thread {
+   private class ReaderThread extends Thread {
+      public final List<String> lines = new ArrayList<>();
       private final InputStream is;
-      private final String name;
-      public RT(String name, InputStream is) {
+      public ReaderThread (InputStream is) {
          setDaemon(true);
-         this.name = name;
          this.is = is;
       }
       @Override
@@ -394,7 +402,7 @@ public class WSContractDelegate
          try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
             String l;
             while ((l = br.readLine()) != null) {
-               log.info(name + ": " + l);
+               lines.add(l);
             }
          } catch (IOException e) {
             log.warn("could not read", e);

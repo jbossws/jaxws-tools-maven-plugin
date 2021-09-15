@@ -35,6 +35,7 @@
     <!-- For test -->
     <junit.version>4.7</junit.version>
     <maven.plugin.testing.harness.version>1.1</maven.plugin.testing.harness.version>
+    <jboss-logging.version>3.1.2.GA</jboss-logging.version>
   </properties>
   
   <!-- Dependencies -->
@@ -58,6 +59,12 @@
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-plugin-api</artifactId>
       <version>${maven.plugin.api.version}</version>
+    </dependency>
+    <!-- this is a provided dependency of jbossws-api that doesn't appear in the plugin dependencies -->
+    <dependency>
+      <groupId>org.jboss.logging</groupId>
+      <artifactId>jboss-logging</artifactId>
+      <version>${jboss-logging.version}</version>
     </dependency>
 
     <!-- Non transient test dependencies -->
@@ -97,7 +104,8 @@
           <preBuildHookScript>setup.bsh</preBuildHookScript>
           <postBuildHookScript>verify.bsh</postBuildHookScript>
           <addTestClassPath>true</addTestClassPath>
-          <streamLogs>true</streamLogs>
+          <!-- enable this for information on what the plugin is doing -->
+          <!--streamLogs>true</streamLogs-->
         </configuration>
         <executions>
           <execution>

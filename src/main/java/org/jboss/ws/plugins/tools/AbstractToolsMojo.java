@@ -128,9 +128,10 @@ abstract class AbstractToolsMojo extends AbstractMojo
    protected List<File> getRequiredPluginDependencyPaths()
    {
       //TODO!! retrieve the actual version to be used from the included stack dependency instead?
-      List<File> result = new ArrayList<File>(3);
+      List<File> result = new ArrayList<File>();
       for (Artifact s : getPluginArtifacts()) {
-         if ("org.jboss.ws".equals(s.getGroupId()) && "jbossws-common-tools".equals(s.getArtifactId()))
+         boolean in = true;
+         if ("org.jboss.ws".equals(s.getGroupId()) && ("jbossws-common-tools".equals(s.getArtifactId()) || "jbossws-api".equals(s.getArtifactId())))
          {
             result.add(s.getFile());
          }
@@ -146,6 +147,15 @@ abstract class AbstractToolsMojo extends AbstractMojo
          {
             result.add(s.getFile());
          }
+         // this is a provided dependency!
+         else if ("org.jboss.logging".equals(s.getGroupId()))
+         {
+            result.add(s.getFile());
+         }
+         else {
+            in = false;
+         }
+         getLog().info("plugin artifact: " + s.getGroupId() + ":" + s.getArtifactId() + ":" + s.getVersion() + " scope: " + s.getScope() + " included: " + in);
       }
       return result;
    }
@@ -181,6 +191,7 @@ abstract class AbstractToolsMojo extends AbstractMojo
     */
    public File createJar(List<String> classPath, String startClassName) throws IOException
    {
+      getLog().info("create manifest jar");
       File tempDirectory = new File(getOutputDirectory().getParentFile(), "jaxws-tools");
       tempDirectory.mkdirs();
       File file = File.createTempFile("jaxws-tools-maven-plugin-classpath-", ".jar", tempDirectory);
