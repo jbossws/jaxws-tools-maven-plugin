@@ -35,7 +35,7 @@
     <getopt.version>1.0.13</getopt.version>
     <maven.version>3.9.11</maven.version>
     <maven.invoker.plugin.version>3.9.1</maven.invoker.plugin.version>
-    <maven.plugin.testing.harness.version>3.4.0</maven.plugin.testing.harness.version>
+    <maven.plugin.testing.harness.version>3.5.1</maven.plugin.testing.harness.version>
     <plexus-utils.version>3.6.0</plexus-utils.version>
     <!-- For test -->
     <junit.version>4.13.2</junit.version>
