@@ -40,6 +40,16 @@
     <!-- For test -->
     <junit.version>4.13.2</junit.version>
   </properties>
+
+  <!-- licenses -->
+  <licenses>
+    <license>
+      <name>Apache License 2.0</name>
+      <url>https://repository.jboss.org/licenses/apache-2.0.txt</url>
+    </license>
+  </licenses>
+
+
   <!-- Dependencies -->
   <dependencies>
     <dependency>
