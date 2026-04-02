@@ -31,7 +31,7 @@
     <!-- Repository Deployment Settings -->
     <nexus.staging.tag>jaxws-tools-maven-plugin-${project.version}</nexus.staging.tag>
     <!-- Dependency versions -->
-    <jbossws.common.tools.version>1.4.0.Final</jbossws.common.tools.version>
+    <jbossws.common.tools.version>2.1.0.Final</jbossws.common.tools.version>
     <getopt.version>1.0.13</getopt.version>
     <maven.version>3.9.11</maven.version>
     <maven.invoker.plugin.version>3.9.1</maven.invoker.plugin.version>
